@@ -1,5 +1,5 @@
 package AccesoDatos;
-import Entidades.Curso;
+import Modelo.Entidades.Curso;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -68,7 +68,38 @@ public class ServicioDatosCurso extends ServicioDatosBase {
         return cursos;
     }
     
-    public boolean existeEsteCurso(int nivelId, int carreraId, int numero){
+    public void revivir(int nivelId, int carreraId, int numero){
+        CallableStatement cstmt = null;
+        try {
+            cstmt = getConexion().prepareCall("{call dbo.Curso_Revivir(?,?,?)}");
+            cstmt.setInt("NivelId", nivelId);
+            cstmt.setInt("CarreraId", carreraId);
+            cstmt.setInt("Numero", numero);
+            cstmt.execute();
+        }
+        catch (Exception e) {
+                Logger.getLogger(ServicioDatosBase.class.getName()).log(Level.SEVERE, null, e);
+        }
+        finally{
+            try {
+                if(cstmt != null && !cstmt.isClosed())
+                    cstmt.close();
+            }
+            catch (Exception e) {
+                Logger.getLogger(ServicioDatosBase.class.getName()).log(Level.SEVERE, null, e);
+            }
+        }
+//        ejecutarSPSinRetorno("dbo.Curso_Revivir");
+//        String sql = ""
+//                + "UPDATE Curso "
+//                + "SET Eliminado = 0 "
+//                + "WHERE NivelId = " + nivelId + " "
+//                + "AND CarreraId = " + carreraId + " "
+//                + "AND Numero = " + numero;
+//        ejecutarConsultaSinRetorno(sql);
+    }
+    
+    public boolean estaEliminado(int nivelId, int carreraId, int numero){
         int count = 0;
         ResultSet rs = null;
         Statement stmt = null;
@@ -78,13 +109,12 @@ public class ServicioDatosCurso extends ServicioDatosBase {
                     + "FROM Curso "
                     + "WHERE NivelId = " + nivelId + " "
                     + "AND CarreraId = " + carreraId + " "
-                    + "AND Numero = " + numero;
+                    + "AND Numero = " + numero + " "
+                    + "AND Eliminado = 1";
             stmt = getConexion().createStatement();
             rs = stmt.executeQuery(sql);
-            if (rs.next()) 
-                count = rs.getInt(1);
-            
-            
+            rs.next();
+            count = rs.getInt(1);
         }
         catch (Exception e) {
                 Logger.getLogger(ServicioDatosCurso.class.getName()).log(Level.SEVERE, null, e);
@@ -100,7 +130,41 @@ public class ServicioDatosCurso extends ServicioDatosBase {
                 Logger.getLogger(ServicioDatosCurso.class.getName()).log(Level.SEVERE, null, e);
             }
         }
-        return (count == 0);
+        return (count != 0);
+    }
+    
+    public boolean existeEstaCombinacion(int nivelId, int carreraId, int numero){
+        int count = 0;
+        ResultSet rs = null;
+        Statement stmt = null;
+        try {
+            String sql = ""
+                    + "SELECT COUNT(1) "
+                    + "FROM Curso "
+                    + "WHERE NivelId = " + nivelId + " "
+                    + "AND CarreraId = " + carreraId + " "
+                    + "AND Numero = " + numero + " "
+                    + "AND Eliminado = 0";
+            stmt = getConexion().createStatement();
+            rs = stmt.executeQuery(sql);
+            rs.next();
+            count = rs.getInt(1);
+        }
+        catch (Exception e) {
+                Logger.getLogger(ServicioDatosCurso.class.getName()).log(Level.SEVERE, null, e);
+        }
+        finally{
+            try {
+                if (rs != null && !rs.isClosed()) 
+                    rs.close();
+                if (stmt != null && !stmt.isClosed()) 
+                    stmt.close();
+            }
+            catch (Exception e) {
+                Logger.getLogger(ServicioDatosCurso.class.getName()).log(Level.SEVERE, null, e);
+            }
+        }
+        return (count != 0);
     }
     
     public boolean insertar(int nivelId, int carreraId, int numero){
@@ -108,7 +172,7 @@ public class ServicioDatosCurso extends ServicioDatosBase {
         ResultSet rs = null;
         int cursoId = -1;
         try {
-            cstmt = super.getConexion().prepareCall(
+            cstmt = getConexion().prepareCall(
                     "{call dbo.Curso_Insertar(?,?,?)}");
             cstmt.setInt("nivelId", nivelId);
             cstmt.setInt("carreraId", carreraId);
@@ -117,8 +181,9 @@ public class ServicioDatosCurso extends ServicioDatosBase {
             rs.next();
             cursoId = rs.getInt(1);
         }
-        catch (Exception e) {
+        catch (SQLException e) {
                 Logger.getLogger(ServicioDatosCurso.class.getName()).log(Level.SEVERE, null, e);
+                
         }
         finally{
             try {
@@ -132,5 +197,23 @@ public class ServicioDatosCurso extends ServicioDatosBase {
             }
         }
         return (cursoId != -1);
+    }
+    
+    public void modificar(int cursoId, int nivelId, int carreraId, int numero){
+        String sql = ""
+                + "UPDATE Curso "
+                + "SET NivelId = " + nivelId + " "
+                + ", CarreraId = " + carreraId + " "
+                + ", Numero = " + numero + " "
+                + "WHERE CursoId = " + cursoId;
+        ejecutarConsultaSinRetorno(sql);
+    }
+    
+    public void eliminar(int cursoId){
+        String sql = ""
+                + "UPDATE Curso "
+                + "SET Eliminado = 1 "
+                + "WHERE CursoId = " + cursoId;
+        ejecutarConsultaSinRetorno(sql);
     }
 }

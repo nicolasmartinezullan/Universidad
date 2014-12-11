@@ -1,4 +1,4 @@
-package Entidades;
+package Modelo.Entidades;
 import java.util.ArrayList;
 import java.util.List;
 /**
@@ -42,8 +42,11 @@ public class Carrera {
     public void setNiveles(List<Nivel> niveles) {
         this.niveles = niveles;
     }
+    public String getCodigoNombre() {
+        return codigo + " - " + nombre;
+    }
     @Override
     public String toString() {
-        return codigo + " - " + nombre;
+        return "Carrera{" + "carreraId=" + carreraId + ", nombre=" + nombre + ", codigo=" + codigo + '}';
     }
 }

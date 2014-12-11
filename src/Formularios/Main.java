@@ -1,6 +1,7 @@
 package Formularios;
+import Modelo.Entidades.Estudiante;
+import Modelo.Entidades.Carrera;
 import Negocio.*;
-import Entidades.*;
 import java.util.List;
 import static com.wagnerandade.coollection.Coollection.*;
 /**

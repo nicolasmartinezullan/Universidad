@@ -1,5 +1,5 @@
 package AccesoDatos;
-import Entidades.Carrera;
+import Modelo.Entidades.Carrera;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

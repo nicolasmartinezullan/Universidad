@@ -1,4 +1,4 @@
-package Entidades;
+package Modelo.Entidades;
 import Negocio.Repositorio;
 import static com.wagnerandade.coollection.Coollection.*;
 /**
@@ -43,10 +43,11 @@ public class Curso {
     public void setNumero(Integer numero) {
         this.numero = numero;
     }
-    @Override
-    public String toString() {
+    public String getCodigoAlfaNumerico(){
         return from(Repositorio.getNiveles()).where("getNivelId", eq(nivelId)).first().getNivel()
                 + from(Repositorio.getCarreras()).where("getCarreraId", eq(carreraId)).first().getCodigo()
                 + numero;
     }
+    @Override
+    public String toString() {return getCodigoAlfaNumerico();}
 }

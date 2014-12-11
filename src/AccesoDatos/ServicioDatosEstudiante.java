@@ -1,5 +1,5 @@
 package AccesoDatos;
-import Entidades.Estudiante;
+import Modelo.Entidades.Estudiante;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +13,7 @@ import java.util.logging.Logger;
  * Noviembre 2014
  */
 public class ServicioDatosEstudiante extends ServicioDatosBase {
+    
     public ServicioDatosEstudiante() {
         super();
     }
@@ -22,26 +23,12 @@ public class ServicioDatosEstudiante extends ServicioDatosBase {
      * @return lista de estudiantes activos
      */
     public List<Estudiante> devolverTodos() {
-        CallableStatement cstmt;
+        CallableStatement cstmt = null;
         ResultSet rs = null;
         List<Estudiante> estudiantes = new ArrayList();
         try {
-            cstmt = super.getConexion().prepareCall(
-                    "{call dbo.Estudiante_DevolverTodos}",
-                    ResultSet.TYPE_SCROLL_INSENSITIVE,
-                    ResultSet.CONCUR_READ_ONLY);
-            boolean resultados = cstmt.execute();
-            int filasAfectadas = 0;
-            while (resultados || filasAfectadas != -1) {
-                if (resultados) {
-                    rs = cstmt.getResultSet();
-                    break;
-                }
-                else {
-                    filasAfectadas = cstmt.getUpdateCount();
-                }
-                resultados = cstmt.getMoreResults();
-            }
+            cstmt = getConexion().prepareCall("{call dbo.Estudiante_DevolverTodos}");
+            rs = cstmt.executeQuery();
             while (rs.next()) {
                 estudiantes.add(new Estudiante(
                         rs.getInt("estudianteId"),
@@ -52,22 +39,29 @@ public class ServicioDatosEstudiante extends ServicioDatosBase {
                         rs.getInt("dni"),
                         rs.getInt("legajo"),
                         rs.getDate("fechaEnrolamiento"),
+                        rs.getDate("fechaNacimiento"),
                         rs.getInt("carreraId"),
-                        rs.getInt("cursoId")
+                        rs.getInt("cursoId"),
+                        rs.getBytes("foto")
                 ));
             }
         }
-        catch (SQLException ex) {
-            Logger.getLogger(ServicioDatosEstudiante.class.getName()).log(Level.SEVERE, null, ex);
+        catch (SQLException e) {
+            Logger.getLogger(ServicioDatosEstudiante.class.getName()).log(Level.SEVERE, null, e);
+            System.out.println(e.getMessage());
         }
         finally {
             try {
-                if (super.getConexion() != null && !super.getConexion().isClosed()) {
-                    super.getConexion().close();
-                }
+                if (getConexion() != null && !getConexion().isClosed()) 
+                    getConexion().close();
+                if(rs != null && !rs.isClosed())
+                    rs.close();
+                if(cstmt != null && !cstmt.isClosed())
+                    cstmt.close();
             }
-            catch (SQLException ex) {
-                Logger.getLogger(ServicioDatosEstudiante.class.getName()).log(Level.SEVERE, null, ex);
+            catch (SQLException e) {
+                Logger.getLogger(ServicioDatosEstudiante.class.getName()).log(Level.SEVERE, null, e);
+                System.out.println(e.getMessage());
             }
         }
         return estudiantes;

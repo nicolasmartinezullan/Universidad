@@ -1,6 +1,6 @@
 package Negocio;
 import AccesoDatos.ServicioDatosCarrera;
-import Entidades.Carrera;
+import Modelo.Entidades.Carrera;
 import java.util.List;
 /**
  *

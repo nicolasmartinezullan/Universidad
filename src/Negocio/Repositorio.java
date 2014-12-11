@@ -1,6 +1,9 @@
 package Negocio;
+import Modelo.Entidades.Nivel;
+import Modelo.Entidades.Curso;
+import Modelo.Entidades.Carrera;
+import Modelo.Entidades.Materia;
 import java.util.*;
-import Entidades.*;
 /**
  *
  * @author Nicolas Martinez Ullan - 66947 - AED - Trabajo Investigacion -

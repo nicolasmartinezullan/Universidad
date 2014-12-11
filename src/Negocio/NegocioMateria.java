@@ -1,6 +1,6 @@
 package Negocio;
 import AccesoDatos.ServicioDatosMateria;
-import Entidades.Materia;
+import Modelo.Entidades.Materia;
 import java.util.List;
 /**
  *

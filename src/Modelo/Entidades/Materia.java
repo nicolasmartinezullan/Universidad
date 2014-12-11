@@ -1,4 +1,4 @@
-package Entidades;
+package Modelo.Entidades;
 import java.util.ArrayList;
 import java.util.List;
 /**

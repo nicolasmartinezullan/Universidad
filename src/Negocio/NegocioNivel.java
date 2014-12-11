@@ -1,6 +1,6 @@
 package Negocio;
 import AccesoDatos.ServicioDatosNivel;
-import Entidades.Nivel;
+import Modelo.Entidades.Nivel;
 import java.util.List;
 /**
  *

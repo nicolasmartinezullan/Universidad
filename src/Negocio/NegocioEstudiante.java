@@ -1,6 +1,6 @@
 package Negocio;
 import AccesoDatos.ServicioDatosEstudiante;
-import Entidades.Estudiante;
+import Modelo.Entidades.Estudiante;
 import java.util.List;
 /**
  *
@@ -8,8 +8,10 @@ import java.util.List;
  * Noviembre 2014
  */
 public class NegocioEstudiante {
+    
+    ServicioDatosEstudiante servicioDatosEstudiante = new ServicioDatosEstudiante();
+    
     public List<Estudiante> devolverTodos() {
-        ServicioDatosEstudiante sde = new ServicioDatosEstudiante();
-        return sde.devolverTodos();
+        return servicioDatosEstudiante.devolverTodos();
     }
 }

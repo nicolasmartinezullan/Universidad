@@ -1,5 +1,5 @@
 package AccesoDatos;
-import Entidades.Materia;
+import Modelo.Entidades.Materia;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
